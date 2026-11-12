@@ -41,6 +41,7 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [activeFaq, setActiveFaq] = useState(-1);
 
   const contactDetails = [
@@ -192,7 +193,7 @@ export default function Contact() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validate();
     if (Object.keys(formErrors).length > 0) {
@@ -201,11 +202,46 @@ export default function Contact() {
     }
 
     setLoading(true);
-    setTimeout(() => {
+    setSubmitError('');
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/nexsagtechnology@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+          _subject: `New Inquiry from NexSAG Website: ${formData.subject.trim()}`,
+          _template: 'table',
+          _captcha: 'false'
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && (data.success === 'true' || data.success === true)) {
+        setIsSuccess(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        // Fallback: if status is 200/ok, consider success
+        if (response.ok) {
+          setIsSuccess(true);
+          setFormData({ name: '', email: '', subject: '', message: '' });
+        } else {
+          setSubmitError(data.message || 'Something went wrong. Please try again.');
+        }
+      }
+    } catch (err) {
+      console.error('Contact form submission error:', err);
+      setSubmitError('Unable to send message right now. Please check your internet connection or email us directly at nexsagtechnology@gmail.com.');
+    } finally {
       setLoading(false);
-      setIsSuccess(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 1200);
+    }
   };
 
   return (
@@ -388,15 +424,15 @@ export default function Contact() {
                     <form onSubmit={handleSubmit} className="space-y-4">
                       {/* Name Field */}
                       <div>
-                        <div className="relative">
-                          <User className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <div className="relative group">
+                          <User className="w-4.5 h-4.5 text-[#EA4317] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition-colors" />
                           <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Your Name"
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none bg-white/70 backdrop-blur-sm ${errors.name
+                            className={`w-full pl-11 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none bg-white/70 backdrop-blur-sm ${errors.name
                                 ? 'border-red-500 bg-red-50/30'
                                 : 'border-gray-200/90 focus:border-[#EA4317] focus:bg-white/95 focus:ring-1 focus:ring-[#EA4317]'
                               }`}
@@ -412,15 +448,15 @@ export default function Contact() {
 
                       {/* Email Field */}
                       <div>
-                        <div className="relative">
-                          <Mail className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <div className="relative group">
+                          <Mail className="w-4.5 h-4.5 text-[#EA4317] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition-colors" />
                           <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Your Email"
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none bg-white/70 backdrop-blur-sm ${errors.email
+                            className={`w-full pl-11 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none bg-white/70 backdrop-blur-sm ${errors.email
                                 ? 'border-red-500 bg-red-50/30'
                                 : 'border-gray-200/90 focus:border-[#EA4317] focus:bg-white/95 focus:ring-1 focus:ring-[#EA4317]'
                               }`}
@@ -436,15 +472,15 @@ export default function Contact() {
 
                       {/* Subject Field */}
                       <div>
-                        <div className="relative">
-                          <FileText className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <div className="relative group">
+                          <FileText className="w-4.5 h-4.5 text-[#EA4317] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition-colors" />
                           <input
                             type="text"
                             name="subject"
                             value={formData.subject}
                             onChange={handleChange}
                             placeholder="Subject"
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none bg-white/70 backdrop-blur-sm ${errors.subject
+                            className={`w-full pl-11 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none bg-white/70 backdrop-blur-sm ${errors.subject
                                 ? 'border-red-500 bg-red-50/30'
                                 : 'border-gray-200/90 focus:border-[#EA4317] focus:bg-white/95 focus:ring-1 focus:ring-[#EA4317]'
                               }`}
@@ -460,15 +496,15 @@ export default function Contact() {
 
                       {/* Message Field */}
                       <div>
-                        <div className="relative">
-                          <MessageSquare className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5 pointer-events-none" />
+                        <div className="relative group">
+                          <MessageSquare className="w-4.5 h-4.5 text-[#EA4317] absolute left-3.5 top-3.5 pointer-events-none z-10 transition-colors" />
                           <textarea
                             name="message"
                             rows="4"
                             value={formData.message}
                             onChange={handleChange}
                             placeholder="Your Message"
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none resize-none bg-white/70 backdrop-blur-sm ${errors.message
+                            className={`w-full pl-11 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none resize-none bg-white/70 backdrop-blur-sm ${errors.message
                                 ? 'border-red-500 bg-red-50/30'
                                 : 'border-gray-200/90 focus:border-[#EA4317] focus:bg-white/95 focus:ring-1 focus:ring-[#EA4317]'
                               }`}
@@ -481,6 +517,13 @@ export default function Contact() {
                           </p>
                         )}
                       </div>
+
+                      {submitError && (
+                        <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-600 flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                          <span>{submitError}</span>
+                        </div>
+                      )}
 
                       {/* Submit Button */}
                       <button

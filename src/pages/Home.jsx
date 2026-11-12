@@ -354,15 +354,15 @@ export default function Home() {
           {/* Partner & Client Brand Logos */}
           <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 lg:gap-16 max-w-5xl mx-auto px-4">
             {/* 1. Thulir Infotech Solutions */}
-            <div className="flex items-center justify-center transition-all duration-300 hover:scale-105">
+            {/* <div className="flex items-center justify-center transition-all duration-300 hover:scale-105">
               <img
                 src={logoThulir}
                 alt="Thulir Infotech Solutions"
                 className="h-14 sm:h-16 lg:h-18 w-auto object-contain filter drop-shadow-[0_0_2px_rgba(255,255,255,0.7)] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
               />
-            </div>
+            </div> */}
 
-            <div className="hidden sm:block w-px h-10 sm:h-12 bg-white/10" />
+            {/* <div className="hidden sm:block w-px h-10 sm:h-12 bg-white/10" /> */}
 
             {/* 2. ZeroSight360 */}
             <a
